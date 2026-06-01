@@ -1,21 +1,17 @@
 """
 BloodFlow Malaysia — Streamlit Dashboard (Data Product, GA2 Objective)
 ======================================================================
-A read-only dashboard that presents the BloodFlow Malaysia forecast outputs
-to PDN's non-technical operational staff.
+IMPROVED VERSION — Enhanced sidebar, dark navigation, live supply-status widget.
 
-It reads the five CSV files exported by the analytical notebook
-(BloodFlow_GA2_FINAL.ipynb) from the ./outputs/ folder. It performs NO
-real-time modelling, which keeps it fast and reliable.
+Changes from original:
+  - Sidebar: dark theme (#0D1422), SVG blood-drop logo, styled nav (no circles),
+    active-page highlight with red left-border accent
+  - Sidebar: live Supply Status widget (pill + mini KPI cards + risk bar)
+  - Sidebar: refined footer with data-date and info card
+  - Global CSS: cleaner metric cards, consistent spacing
+  - Code: data loaded before sidebar so the status widget can use it
 
-Pages:
-  1. Overview / KPI Dashboard
-  2. Historical Trend Explorer
-  3. 30-Day Forecast & Risk Calendar
-  4. Holiday Impact Matrix
-  5. Model Performance
-
-Run locally:   streamlit run app.py
+Run locally:  streamlit run app.py
 """
 
 import streamlit as st
@@ -27,10 +23,9 @@ import plotly.express as px
 # ─────────────────────────────────────────────────────────────────────────────
 # CONFIGURATION
 # ─────────────────────────────────────────────────────────────────────────────
-CRITICAL_THRESHOLD = 2000          # MOH minimum daily requirement (bags/day)
-OUTPUTS_DIR = "outputs"            # folder holding the CSVs from the notebook
+CRITICAL_THRESHOLD = 2000
+OUTPUTS_DIR = "outputs"
 
-# BloodFlow theme colours
 BLOOD_RED = "#A61C2E"
 DARK_RED  = "#7B1220"
 NAVY      = "#1A3A5C"
@@ -45,21 +40,132 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# A little CSS to tidy the look
-st.markdown(
-    """
-    <style>
-      .main { background-color: #FAFAFA; }
-      div[data-testid="stMetricValue"] { font-size: 1.6rem; }
-      .block-container { padding-top: 2rem; }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+# ─────────────────────────────────────────────────────────────────────────────
+# GLOBAL CSS  ── sidebar + main content
+# ─────────────────────────────────────────────────────────────────────────────
+st.markdown("""
+<style>
+/* ═══════════════════ SIDEBAR ═══════════════════ */
+
+section[data-testid="stSidebar"] {
+    background: #0D1422 !important;
+}
+section[data-testid="stSidebar"] > div:first-child {
+    padding: 1.25rem 0.75rem 1rem;
+}
+
+/* Nav: section label ("NAVIGATE") */
+section[data-testid="stSidebar"] .stRadio > div > label {
+    font-size: 0.6rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #253550 !important;
+    padding: 0.9rem 0.4rem 0.35rem !important;
+    display: block;
+}
+
+/* Nav: hide radio circles */
+section[data-testid="stSidebar"] [role="radio"] {
+    display: none !important;
+}
+
+/* Nav: each option row */
+section[data-testid="stSidebar"] .stRadio label {
+    width: 100%;
+    display: flex !important;
+    align-items: center;
+    padding: 0.6rem 0.85rem !important;
+    border-radius: 8px;
+    margin: 2px 0;
+    color: #5A7090 !important;
+    font-size: 0.86rem;
+    font-weight: 500;
+    border-left: 3px solid transparent;
+    transition: background 0.15s, color 0.15s;
+    cursor: pointer;
+    line-height: 1.3;
+}
+section[data-testid="stSidebar"] .stRadio label:hover {
+    background: rgba(255,255,255,0.04) !important;
+    color: #8AAAC8 !important;
+}
+
+/* Nav: active page — label wrapping the checked radio */
+section[data-testid="stSidebar"] .stRadio label:has([aria-checked="true"]) {
+    background: rgba(166,28,46,0.16) !important;
+    color: #FF8090 !important;
+    border-left: 3px solid #A61C2E !important;
+    font-weight: 600;
+}
+
+/* Dividers in sidebar */
+section[data-testid="stSidebar"] hr {
+    border-color: #1A2540 !important;
+    margin: 0.6rem 0 !important;
+}
+
+/* ═══════════════════ MAIN CONTENT ═══════════════════ */
+
+.main { background-color: #F5F7FB; }
+div[data-testid="stMetricValue"] { font-size: 1.6rem; font-weight: 700; }
+div[data-testid="stMetricLabel"] { font-size: 0.82rem; font-weight: 600; color: #5A6A80; }
+div[data-testid="stMetricDelta"] { font-size: 0.75rem; }
+.block-container { padding-top: 1.75rem; }
+
+/* ═══════════════════ SIDEBAR MICRO-COMPONENTS ═══════════════════ */
+
+/* Supply status pill */
+.sb-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 11px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+}
+.sb-pill-safe { background: #071A0E; color: #34D399; border: 1px solid rgba(6,78,59,.33); }
+.sb-pill-warn { background: #1C1300; color: #FBBF24; border: 1px solid rgba(113,63,8,.33); }
+.sb-pill-crit { background: #1C0307; color: #F87171; border: 1px solid rgba(127,29,29,.33); }
+
+/* Mini stat cards */
+.sb-stat {
+    background: #111B2E;
+    border-radius: 7px;
+    padding: 8px 10px;
+    flex: 1;
+}
+.sb-stat-lbl {
+    font-size: 0.56rem;
+    color: #2A3E58;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+}
+.sb-stat-val {
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: #9DBAD5;
+    margin-top: 1px;
+    line-height: 1.2;
+}
+.sb-stat-unit { font-size: 0.55rem; color: #243348; margin-top: 1px; }
+
+/* Footer info card */
+.sb-info {
+    background: #090F1C;
+    border-radius: 8px;
+    padding: 10px 12px;
+    border-left: 3px solid #172A45;
+}
+</style>
+""", unsafe_allow_html=True)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# DATA LOADING  (cached so the CSVs are read only once)
+# DATA LOADING  (moved before sidebar so status widget can read it)
 # ─────────────────────────────────────────────────────────────────────────────
 @st.cache_data
 def load_csv(name):
@@ -78,7 +184,6 @@ def load_all():
         "holiday":  load_csv("holiday_impact_matrix.csv"),
         "metrics":  load_csv("evaluation_metrics.csv"),
     }
-    # Parse date columns
     if data["cleaned"] is not None:
         data["cleaned"]["date"] = pd.to_datetime(data["cleaned"]["date"])
     if data["forecast"] is not None:
@@ -98,26 +203,6 @@ def metric_value(metrics_df, name):
     return row["Value"].iloc[0]
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# SIDEBAR  (navigation)
-# ─────────────────────────────────────────────────────────────────────────────
-st.sidebar.markdown(f"<h1 style='color:{BLOOD_RED};margin-bottom:0'>🩸 BloodFlow</h1>",
-                    unsafe_allow_html=True)
-st.sidebar.markdown("**Malaysia — National Blood Supply Forecasting**")
-st.sidebar.caption("WQD7001 GA2 · Group 12 · Universiti Malaya")
-st.sidebar.divider()
-
-page = st.sidebar.radio(
-    "Navigate",
-    [
-        "📊 Overview / KPI Dashboard",
-        "📈 Historical Trend Explorer",
-        "🗓️ 30-Day Forecast & Risk Calendar",
-        "🎉 Holiday Impact Matrix",
-        "🎯 Model Performance",
-    ],
-)
-
 data = load_all()
 
 # Hard stop if the outputs folder is empty
@@ -129,11 +214,154 @@ if all(v is None for v in data.values()):
     )
     st.stop()
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SIDEBAR
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── 1. Logo & Branding ──────────────────────────────────────────────────────
+st.sidebar.markdown(f"""
+<div style="display:flex;align-items:center;gap:10px;padding:0.2rem 0.3rem 0.4rem;">
+  <svg width="28" height="34" viewBox="0 0 28 34" fill="none"
+       xmlns="http://www.w3.org/2000/svg">
+    <path d="M14 1C14 1 1.5 13.5 1.5 21C1.5 27.9 7.1 33.5 14 33.5
+             C20.9 33.5 26.5 27.9 26.5 21C26.5 13.5 14 1 14 1Z"
+          fill="{BLOOD_RED}"/>
+    <path d="M14 11C14 11 8 18 8 22C8 25.3 10.7 28 14 28
+             C17.3 28 20 25.3 20 22C20 18 14 11 14 11Z"
+          fill="{DARK_RED}" opacity="0.5"/>
+    <path d="M11.5 19.5C11.5 19.5 10.5 21.5 10.5 23"
+          stroke="white" stroke-width="1.3" stroke-linecap="round" opacity="0.35"/>
+  </svg>
+  <div>
+    <div style="font-size:1.28rem;font-weight:800;color:#E81A2C;
+                letter-spacing:-0.01em;line-height:1.1;">BloodFlow</div>
+    <div style="font-size:0.57rem;color:#233248;font-weight:800;
+                letter-spacing:0.14em;text-transform:uppercase;">Malaysia</div>
+  </div>
+</div>
+<div style="padding:0.1rem 0.3rem 0.2rem;">
+  <div style="font-size:0.72rem;color:#2E4565;line-height:1.45;font-weight:500;">
+    National Blood Supply Forecasting
+  </div>
+</div>
+""", unsafe_allow_html=True)
+
 st.sidebar.divider()
-st.sidebar.caption(
-    f"Data product is read-only. It reads the CSVs exported by the notebook "
-    f"and does no live modelling. Critical threshold: {CRITICAL_THRESHOLD:,} bags/day."
+
+# ── 2. Supply Status Widget ──────────────────────────────────────────────────
+_n30 = data["next30"]
+if _n30 is not None:
+    _risk_count = (
+        int(_n30["risk"].sum()) if "risk" in _n30.columns
+        else int((_n30["yhat"] < CRITICAL_THRESHOLD).sum())
+    )
+    _avg_pred = _n30["yhat"].mean()
+
+    if _risk_count >= 10:
+        _pill_cls = "sb-pill-crit"
+        _pill_txt = "🔴 HIGH RISK"
+        _bar_clr  = "#EF4444"
+    elif _risk_count > 0:
+        _pill_cls = "sb-pill-warn"
+        _pill_txt = "🟡 MODERATE"
+        _bar_clr  = "#F59E0B"
+    else:
+        _pill_cls = "sb-pill-safe"
+        _pill_txt = "🟢 HEALTHY"
+        _bar_clr  = "#22C55E"
+
+    _risk_pct   = max(2, min(100, int(_risk_count / 30 * 100)))
+    _risk_val_c = "#F87171" if _risk_count > 0 else "#34D399"
+
+    st.sidebar.markdown(f"""
+<div style="padding:0 0.15rem;">
+  <div style="font-size:0.58rem;font-weight:800;color:#233248;
+              text-transform:uppercase;letter-spacing:0.13em;margin-bottom:7px;">
+    Supply Status
+  </div>
+  <span class="sb-pill {_pill_cls}">{_pill_txt}</span>
+
+  <div style="display:flex;gap:5px;margin-top:9px;">
+    <div class="sb-stat">
+      <div class="sb-stat-lbl">30-day avg</div>
+      <div class="sb-stat-val">{_avg_pred:,.0f}</div>
+      <div class="sb-stat-unit">bags / day</div>
+    </div>
+    <div class="sb-stat">
+      <div class="sb-stat-lbl">Risk days</div>
+      <div class="sb-stat-val" style="color:{_risk_val_c};">{_risk_count}/30</div>
+      <div class="sb-stat-unit">below threshold</div>
+    </div>
+  </div>
+
+  <div style="margin-top:9px;">
+    <div style="display:flex;justify-content:space-between;
+                font-size:0.57rem;color:#233248;margin-bottom:3px;">
+      <span>Risk exposure</span>
+      <span>{_risk_pct}%</span>
+    </div>
+    <div style="background:#090F1C;border-radius:3px;height:4px;overflow:hidden;">
+      <div style="height:100%;border-radius:3px;width:{_risk_pct}%;
+                  background:{_bar_clr};"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;
+                font-size:0.54rem;color:#182233;margin-top:2px;">
+      <span>Safe ←</span><span>→ Critical</span>
+    </div>
+  </div>
+</div>
+""", unsafe_allow_html=True)
+
+    st.sidebar.divider()
+
+# ── 3. Navigation ─────────────────────────────────────────────────────────────
+page = st.sidebar.radio(
+    "Navigate",
+    [
+        "📊 Overview / KPI Dashboard",
+        "📈 Historical Trend Explorer",
+        "🗓️ 30-Day Forecast & Risk Calendar",
+        "🎉 Holiday Impact Matrix",
+        "🎯 Model Performance",
+    ],
 )
+
+st.sidebar.divider()
+
+# ── 4. Sidebar Footer ─────────────────────────────────────────────────────────
+_last_date = (
+    data["cleaned"]["date"].max().strftime("%d %b %Y")
+    if data["cleaned"] is not None else "N/A"
+)
+
+st.sidebar.markdown(f"""
+<div style="padding:0 0.15rem;">
+  <div class="sb-info">
+    <div style="font-size:0.62rem;font-weight:700;color:#2A4060;margin-bottom:4px;">
+      ℹ️ Read-only Mode
+    </div>
+    <div style="font-size:0.61rem;color:#1E3250;line-height:1.55;">
+      Reads CSVs exported by the notebook · No live modelling
+    </div>
+    <div style="margin-top:7px;padding-top:6px;border-top:1px solid #111E32;">
+      <div style="margin-bottom:3px;">
+        <span style="font-size:0.6rem;color:#1E3250;">Data through: </span>
+        <span style="font-size:0.6rem;font-weight:700;color:#2A5080;">{_last_date}</span>
+      </div>
+      <div>
+        <span style="font-size:0.62rem;font-weight:700;color:#8B1A28;">
+          ⚠ Threshold: {CRITICAL_THRESHOLD:,} bags/day
+        </span>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:8px;font-size:0.57rem;color:#182233;text-align:center;
+              letter-spacing:0.03em;">
+    WQD7001 GA2 · Group 12 · Universiti Malaya
+  </div>
+</div>
+""", unsafe_allow_html=True)
 
 
 # =============================================================================
