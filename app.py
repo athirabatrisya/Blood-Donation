@@ -48,7 +48,7 @@ st.markdown("""
 /* ═══════════════════ SIDEBAR ═══════════════════ */
 
 section[data-testid="stSidebar"] {
-    background: #0D1422 !important;
+    background: #2b3857 !important;
 }
 section[data-testid="stSidebar"] > div:first-child {
     padding: 1.25rem 0.75rem 1rem;
