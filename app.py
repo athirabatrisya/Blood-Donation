@@ -56,6 +56,25 @@ PILL_SAFE_TEXT = "#86EFAC" if _sidebar_dark else "#15803D"
 PILL_WARN_TEXT = "#FDE68A" if _sidebar_dark else "#92400E"
 PILL_CRIT_TEXT = "#FCA5A5" if _sidebar_dark else "#B91C1C"
 
+CHART_DARK = _theme_type == "dark"
+CHART_BG = "#0F172A" if CHART_DARK else "#FFFFFF"
+CHART_PLOT_BG = "#111827" if CHART_DARK else "#FFFFFF"
+CHART_TEXT = "#F8FAFC" if CHART_DARK else "#172033"
+CHART_MUTED = "#CBD5E1" if CHART_DARK else "#5A6A80"
+CHART_GRID = "rgba(148,163,184,0.24)" if CHART_DARK else "rgba(26,58,92,0.12)"
+CHART_ZERO = "rgba(203,213,225,0.45)" if CHART_DARK else "rgba(26,58,92,0.22)"
+CHART_HOVER_BG = "#111827" if CHART_DARK else "#FFFFFF"
+CHART_HOVER_BORDER = "#334155" if CHART_DARK else "#D6DAE2"
+CHART_BLUE = "#60A5FA" if CHART_DARK else NAVY
+CHART_RED = "#FB7185" if CHART_DARK else BLOOD_RED
+CHART_RED_SOFT = "rgba(248,113,113,0.45)" if CHART_DARK else "rgba(166,28,46,0.35)"
+CHART_GOLD = "#FBBF24" if CHART_DARK else GOLD
+CHART_GREY = "#CBD5E1" if CHART_DARK else GREY
+CHART_INTERVAL_FILL = "rgba(96,165,250,0.20)" if CHART_DARK else "rgba(26,58,92,0.12)"
+CHART_MARKER_LINE = CHART_BG if CHART_DARK else "#FFFFFF"
+CHART_HOLIDAY_SCALE = (["#F87171", "#FB7185", "#FBBF24"] if CHART_DARK
+                       else ["#7B1220", "#A61C2E", "#E8A838"])
+
 # ─────────────────────────────────────────────────────────────────────────────
 # GLOBAL CSS  ── sidebar + main content
 # ─────────────────────────────────────────────────────────────────────────────
@@ -212,6 +231,51 @@ div[data-testid="stMetricDelta"] { font-size: 0.75rem; }
 )
 
 
+def style_chart(fig, height, **layout_kwargs):
+    """Keep Plotly chart text readable in Streamlit light and dark themes."""
+    fig.update_layout(
+        height=height,
+        paper_bgcolor=CHART_BG,
+        plot_bgcolor=CHART_PLOT_BG,
+        font=dict(color=CHART_TEXT),
+        hoverlabel=dict(
+            bgcolor=CHART_HOVER_BG,
+            bordercolor=CHART_HOVER_BORDER,
+            font=dict(color=CHART_TEXT),
+        ),
+    )
+    fig.update_xaxes(
+        automargin=True,
+        title_standoff=14,
+        color=CHART_MUTED,
+        title_font=dict(color=CHART_TEXT),
+        tickfont=dict(color=CHART_MUTED),
+        gridcolor=CHART_GRID,
+        zerolinecolor=CHART_ZERO,
+        linecolor=CHART_ZERO,
+    )
+    fig.update_yaxes(
+        automargin=True,
+        title_standoff=12,
+        color=CHART_MUTED,
+        title_font=dict(color=CHART_TEXT),
+        tickfont=dict(color=CHART_MUTED),
+        gridcolor=CHART_GRID,
+        zerolinecolor=CHART_ZERO,
+        linecolor=CHART_ZERO,
+    )
+    if layout_kwargs:
+        fig.update_layout(**layout_kwargs)
+    fig.update_layout(
+        legend=dict(
+            bgcolor="rgba(0,0,0,0)",
+            font=dict(color=CHART_TEXT),
+        )
+    )
+    fig.update_annotations(font=dict(color=CHART_TEXT))
+    return fig
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # DATA LOADING  (moved before sidebar so status widget can read it)
 # ─────────────────────────────────────────────────────────────────────────────
@@ -305,11 +369,11 @@ st.sidebar.divider()
 page = st.sidebar.radio(
     "Navigate",
     [
-        "📊 Overview / KPI Dashboard",
-        "📈 Historical Trend Explorer",
-        "🗓️ 30-Day Forecast & Risk Calendar",
-        "🎉 Holiday Impact Matrix",
-        "🎯 Model Performance",
+        "■ Overview / KPI Dashboard",
+        "▲ Historical Trend Explorer",
+        "◆ 30-Day Forecast & Risk Calendar",
+        "✦ Holiday Impact Matrix",
+        "● Model Performance",
     ],
 )
 
@@ -409,8 +473,8 @@ if _n30 is not None:
 # =============================================================================
 # PAGE 1 — OVERVIEW / KPI DASHBOARD
 # =============================================================================
-if page.startswith("📊"):
-    st.title("📊 Overview Dashboard")
+if page.startswith("■"):
+    st.title("■ Overview Dashboard")
     st.caption("National blood supply at a glance, based on the latest 30-day forecast.")
 
     n30     = data["next30"]
@@ -470,7 +534,7 @@ if page.startswith("📊"):
         fig = go.Figure()
         fig.add_trace(go.Scatter(
             x=n30_view["ds"], y=n30_view["yhat"], mode="lines+markers",
-            line=dict(color=NAVY, width=2), name="Predicted donations",
+            line=dict(color=CHART_BLUE, width=2), name="Predicted donations",
             hovertemplate="<b>%{x|%a, %d %b %Y}</b><br>"
                           "Predicted: %{y:,.0f} bags<br>"
                           "<extra></extra>"))
@@ -478,29 +542,28 @@ if page.startswith("📊"):
             fig.add_trace(go.Scatter(
                 x=list(n30_view["ds"]) + list(n30_view["ds"][::-1]),
                 y=list(n30_view["yhat_upper"]) + list(n30_view["yhat_lower"][::-1]),
-                fill="toself", fillcolor="rgba(26,58,92,0.12)",
+                fill="toself", fillcolor=CHART_INTERVAL_FILL,
                 line=dict(color="rgba(0,0,0,0)"), name="80% interval",
                 showlegend=True, hoverinfo="skip"))
         if "risk" in n30_view:
             rd = n30_view[n30_view["risk"] == 1]
             fig.add_trace(go.Scatter(
                 x=rd["ds"], y=rd["yhat"], mode="markers",
-                marker=dict(color=BLOOD_RED, size=12,
-                            line=dict(color="white", width=2)),
+                marker=dict(color=CHART_RED, size=12,
+                            line=dict(color=CHART_MARKER_LINE, width=2)),
                 name="Risk day",
                 hovertemplate="<b>⚠️ %{x|%a, %d %b %Y}</b><br>"
                               "Risk day: %{y:,.0f} bags<br>"
                               "<extra></extra>"))
-        fig.add_hline(y=CRITICAL_THRESHOLD, line_dash="dash", line_color=BLOOD_RED,
+        fig.add_hline(y=CRITICAL_THRESHOLD, line_dash="dash", line_color=CHART_RED,
                       annotation_text=f"MOH threshold {CRITICAL_THRESHOLD:,}",
                       annotation_position="top left")
-        fig.update_layout(height=380, margin=dict(t=30, b=10),
-                          plot_bgcolor="white",
-                          yaxis_title="Predicted donations (bags)",
-                          xaxis_title="Date",
-                          hovermode="x unified",
-                          legend=dict(orientation="h", yanchor="bottom", y=1.02))
-        st.plotly_chart(fig, use_container_width=True)
+        style_chart(fig, height=410, margin=dict(t=30, b=72),
+                    yaxis_title="Predicted donations (bags)",
+                    xaxis_title="Date",
+                    hovermode="x unified",
+                    legend=dict(orientation="h", yanchor="bottom", y=1.02))
+        st.plotly_chart(fig, use_container_width=True, theme=None)
 
         if cleaned is not None:
             st.caption(
@@ -512,8 +575,8 @@ if page.startswith("📊"):
 # =============================================================================
 # PAGE 2 — HISTORICAL TREND EXPLORER
 # =============================================================================
-elif page.startswith("📈"):
-    st.title("📈 Historical Trend Explorer")
+elif page.startswith("▲"):
+    st.title("▲ Historical Trend Explorer")
     st.caption("Daily national donations, 2006 onward, with optional rolling average and MCO annotation.")
 
     cleaned = data["cleaned"]
@@ -562,7 +625,7 @@ elif page.startswith("📈"):
         fig = go.Figure()
         fig.add_trace(go.Scatter(
             x=d["date"], y=d["donations"], mode="lines",
-            line=dict(color="rgba(166,28,46,0.35)", width=1),
+            line=dict(color=CHART_RED_SOFT, width=1),
             name="Daily donations",
             hovertemplate="<b>%{x|%a, %d %b %Y}</b><br>"
                           "Donations: %{y:,.0f} bags<extra></extra>"))
@@ -570,23 +633,23 @@ elif page.startswith("📈"):
             d["roll"] = d["donations"].rolling(365, min_periods=30).mean()
             fig.add_trace(go.Scatter(
                 x=d["date"], y=d["roll"], mode="lines",
-                line=dict(color=NAVY, width=3),
+                line=dict(color=CHART_BLUE, width=3),
                 name="365-day rolling average",
                 hovertemplate="<b>%{x|%b %Y}</b><br>"
                               "Rolling avg: %{y:,.0f} bags<extra></extra>"))
         if show_mco and "is_mco" in d.columns and d["is_mco"].any():
             mco = d[d["is_mco"] == 1]
             fig.add_vrect(x0=mco["date"].min(), x1=mco["date"].max(),
-                          fillcolor=GOLD, opacity=0.18, line_width=0,
+                          fillcolor=CHART_GOLD, opacity=0.18, line_width=0,
                           annotation_text="COVID-19 MCO",
                           annotation_position="top left")
-        fig.add_hline(y=CRITICAL_THRESHOLD, line_dash="dash", line_color=GREY,
+        fig.add_hline(y=CRITICAL_THRESHOLD, line_dash="dash", line_color=CHART_GREY,
                       annotation_text=f"{CRITICAL_THRESHOLD:,} threshold")
-        fig.update_layout(height=480, plot_bgcolor="white",
-                          yaxis_title="Donations (bags)", xaxis_title="Date",
-                          hovermode="x unified",
-                          legend=dict(orientation="h", yanchor="bottom", y=1.02))
-        st.plotly_chart(fig, use_container_width=True)
+        style_chart(fig, height=480,
+                    yaxis_title="Donations (bags)", xaxis_title="Date",
+                    hovermode="x unified",
+                    legend=dict(orientation="h", yanchor="bottom", y=1.02))
+        st.plotly_chart(fig, use_container_width=True, theme=None)
 
         # ── Stats summary ─────────────────────────────────────────────
         c1, c2, c3, c4 = st.columns(4)
@@ -603,8 +666,8 @@ elif page.startswith("📈"):
 # =============================================================================
 # PAGE 3 — 30-DAY FORECAST & RISK CALENDAR
 # =============================================================================
-elif page.startswith("🗓"):
-    st.title("🗓️ 30-Day Forecast & Risk Calendar")
+elif page.startswith("◆"):
+    st.title("◆ 30-Day Forecast & Risk Calendar")
     st.caption("Day-by-day predicted donations with supply-risk flags for PDN planning.")
 
     n30 = data["next30"]
@@ -705,8 +768,8 @@ elif page.startswith("🗓"):
 # =============================================================================
 # PAGE 4 — HOLIDAY IMPACT MATRIX
 # =============================================================================
-elif page.startswith("🎉"):
-    st.title("🎉 Holiday Impact Matrix")
+elif page.startswith("✦"):
+    st.title("✦ Holiday Impact Matrix")
     st.caption("How major Malaysian festivals affect daily donations (Objective 1 result).")
 
     h = data["holiday"]
@@ -749,19 +812,19 @@ elif page.startswith("🎉"):
 
             fig = px.bar(hs, x=impact_col, y=name_col, orientation="h",
                          color=impact_col,
-                         color_continuous_scale=["#7B1220", "#A61C2E", "#E8A838"])
+                         color_continuous_scale=CHART_HOLIDAY_SCALE)
             fig.update_traces(hovertemplate=hover_texts, name="")
-            fig.update_layout(height=420, plot_bgcolor="white",
-                              coloraxis_showscale=False,
-                              xaxis_title="Impact % (vs 7-day pre-holiday average)",
-                              yaxis_title="")
+            style_chart(fig, height=420,
+                        coloraxis_showscale=False,
+                        xaxis_title="Impact % (vs 7-day pre-holiday average)",
+                        yaxis_title="")
             for _, r in hs.iterrows():
                 fig.add_annotation(
                     x=r[impact_col], y=r[name_col],
                     text=f"{r[impact_col]:+.1f}%", showarrow=False,
                     xshift=-28 if r[impact_col] < 0 else 28,
-                    font=dict(size=12, color=NAVY))
-            sort_cols[1].plotly_chart(fig, use_container_width=True)
+                    font=dict(size=12, color=CHART_TEXT))
+            sort_cols[1].plotly_chart(fig, use_container_width=True, theme=None)
 
         # ── KPI cards for the worst holidays ──────────────────────────
         st.divider()
@@ -794,8 +857,8 @@ elif page.startswith("🎉"):
 # =============================================================================
 # PAGE 5 — MODEL PERFORMANCE
 # =============================================================================
-elif page.startswith("🎯"):
-    st.title("🎯 Model Performance")
+elif page.startswith("●"):
+    st.title("● Model Performance")
     st.caption("Out-of-sample accuracy of the Prophet model on the 2025 holdout.")
 
     m = data["metrics"]
@@ -882,29 +945,29 @@ elif page.startswith("🎯"):
                 fig = go.Figure()
                 fig.add_trace(go.Scatter(
                     x=sub["date"], y=sub["donations"],
-                    mode="lines", line=dict(color=BLOOD_RED, width=1.3),
+                    mode="lines", line=dict(color=CHART_RED, width=1.3),
                     name="Actual",
                     hovertemplate="<b>%{x|%a, %d %b %Y}</b><br>"
                                   "Actual: %{y:,.0f}<extra></extra>"))
                 fig.add_trace(go.Scatter(
                     x=sub["date"], y=sub["yhat"],
-                    mode="lines", line=dict(color=NAVY, width=1.3),
+                    mode="lines", line=dict(color=CHART_BLUE, width=1.3),
                     name="Predicted",
                     hovertemplate="<b>%{x|%a, %d %b %Y}</b><br>"
                                   "Predicted: %{y:,.0f}<extra></extra>"))
                 fig.add_trace(go.Scatter(
                     x=list(sub["date"]) + list(sub["date"][::-1]),
                     y=list(sub["yhat_upper"]) + list(sub["yhat_lower"][::-1]),
-                    fill="toself", fillcolor="rgba(26,58,92,0.12)",
+                    fill="toself", fillcolor=CHART_INTERVAL_FILL,
                     line=dict(color="rgba(0,0,0,0)"), name="80% interval",
                     hoverinfo="skip"))
-                fig.update_layout(height=450, plot_bgcolor="white",
-                                  yaxis_title="Donations (bags)",
-                                  xaxis_title="Date",
-                                  hovermode="x unified",
-                                  legend=dict(orientation="h",
-                                              yanchor="bottom", y=1.02))
-                st.plotly_chart(fig, use_container_width=True)
+                style_chart(fig, height=450,
+                            yaxis_title="Donations (bags)",
+                            xaxis_title="Date",
+                            hovermode="x unified",
+                            legend=dict(orientation="h",
+                                        yanchor="bottom", y=1.02))
+                st.plotly_chart(fig, use_container_width=True, theme=None)
             else:
                 st.info("No overlapping holdout dates found between actuals and forecast.")
         else:
