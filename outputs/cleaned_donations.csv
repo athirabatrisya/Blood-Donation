@@ -7453,3 +7453,6 @@ date,donations,is_holiday,holiday_name,is_outlier,is_mco
 2026-05-27,314,1,hari_raya_aidiladha,0,0
 2026-05-28,672,0,Non-Holiday,0,0
 2026-05-29,679,0,Non-Holiday,0,0
+2026-05-30,1747,0,Non-Holiday,0,0
+2026-05-31,2690,1,wesak_day,0,0
+2026-06-01,1023,0,Non-Holiday,0,0
