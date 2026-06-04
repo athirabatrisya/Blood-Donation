@@ -19,6 +19,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
+from streamlit_option_menu import option_menu
 
 # ─────────────────────────────────────────────────────────────────────────────
 # CONFIGURATION
@@ -92,56 +93,6 @@ section[data-testid="stSidebar"] > div:first-child {
     overflow: hidden !important;
 }
 
-/* Nav: section label ("NAVIGATE") */
-section[data-testid="stSidebar"] .stRadio > div > label {
-    font-size: 0.54rem !important;
-    font-weight: 800 !important;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: __SIDEBAR_MUTED__ !important;
-    padding: 0.35rem 0.35rem 0.2rem !important;
-    display: block;
-}
-
-/* Keep the radio choice buttons visible */
-section[data-testid="stSidebar"] .stRadio [role="radio"] {
-    display: flex !important;
-}
-
-/* Nav: each option row */
-section[data-testid="stSidebar"] .stRadio label {
-    width: 100%;
-    display: flex !important;
-    align-items: center;
-    padding: 0.38rem 0.62rem !important;
-    border-radius: 8px;
-    margin: 1px 0;
-    color: __SIDEBAR_TEXT__ !important;
-    font-size: 0.73rem;
-    font-weight: 500;
-    border-left: 3px solid transparent;
-    transition: background 0.15s, color 0.15s;
-    cursor: pointer;
-    line-height: 1.15;
-}
-section[data-testid="stSidebar"] .stRadio label div[data-testid="stMarkdownContainer"],
-section[data-testid="stSidebar"] .stRadio label p {
-    color: inherit !important;
-    -webkit-text-fill-color: currentColor !important;
-}
-section[data-testid="stSidebar"] .stRadio label:hover {
-    background: __SIDEBAR_HOVER__ !important;
-    color: __SIDEBAR_ACCENT_TEXT__ !important;
-}
-
-/* Nav: active page — label wrapping the checked radio */
-section[data-testid="stSidebar"] .stRadio label:has([aria-checked="true"]),
-section[data-testid="stSidebar"] .stRadio label:has(input:checked) {
-    background: __SIDEBAR_ACTIVE__ !important;
-    color: __SIDEBAR_ACCENT_TEXT__ !important;
-    border-left: 3px solid #A61C2E !important;
-    font-weight: 600;
-}
 
 /* Dividers in sidebar */
 section[data-testid="stSidebar"] hr {
@@ -213,6 +164,8 @@ div[data-testid="stMetricDelta"] { font-size: 0.75rem; }
     border: 1px solid __SIDEBAR_LINE__;
     border-left: 3px solid #A61C2E;
 }
+            
+
 </style>
 """.replace("__SIDEBAR_BG__", SIDEBAR_BG)
     .replace("__SIDEBAR_CARD__", SIDEBAR_CARD)
@@ -366,16 +319,122 @@ st.sidebar.markdown(f"""
 st.sidebar.divider()
 
 # ── 2. Navigation ─────────────────────────────────────────────────────────────
-page = st.sidebar.radio(
-    "Navigate",
-    [
-        "■ Overview / KPI Dashboard",
-        "▲ Historical Trend Explorer",
-        "◆ 30-Day Forecast & Risk Calendar",
-        "✦ Holiday Impact Matrix",
-        "● Model Performance",
-    ],
-)
+with st.sidebar:
+    page = option_menu(
+        menu_title="Navigate",
+        options=[
+            "Overview / KPI Dashboard",
+            "Historical Trend Explorer",
+            "30-Day Forecast & Risk Calendar",
+            "Holiday Impact Matrix",
+            "Model Performance",
+        ],
+        icons=["speedometer2", "graph-up-arrow", "calendar-week", "brightness-high","activity",],
+        menu_icon=None,
+        default_index=0,
+        styles={
+            "container": {
+                "padding": "none",
+                "margin": "none",
+                
+                "border": "none",
+            },
+            "menu-title": {
+                "font-size": "0.54rem",
+                "font-weight": "800",
+                "letter-spacing": "0.14em",
+                "text-transform": "uppercase",
+                "color": SIDEBAR_MUTED,
+                "padding": "0.35rem 0.35rem 0.2rem",
+                "display": "block",
+            },
+            "nav": {
+                "gap": "6px",
+                "display": "flex",
+                "flex-direction": "column",
+                "width": "100%",
+            },
+            "nav-link": {
+                "display": "flex",
+                "align-items": "center",
+                "width": "100%",
+                "padding": "0.38rem 0.62rem",
+                "border-radius": "5px",
+                "margin": "1px 0",
+                "font-size": "0.9rem",
+                "font-weight": "500",
+                "line-height": "1.15",
+                "color": SIDEBAR_TEXT,
+                "background-color": "transparent",
+                "border-left": "3px solid transparent",
+                "transition": "background 0.15s, color 0.15s",
+                "gap": "8px",
+            },
+            "nav-link-hover": {
+                "background-color": SIDEBAR_HOVER,
+                "color": SIDEBAR_ACCENT_TEXT,
+            },
+            "nav-link-selected": {
+                "background-color": SIDEBAR_ACTIVE,
+                "color": SIDEBAR_ACCENT_TEXT,
+                "border-left": "3px solid #A61C2E",
+                "font-weight": "600",
+            },
+            "icon": {
+                "font-size": "0.95rem",
+                "margin-right": "2px",
+                "color": "inherit",  
+            },
+        }
+    )
+    
+st.markdown("""
+<style>
+
+section[data-testid="stSidebar"] div[data-testid="stVerticalBlock"] > div:has(.nav-pills) {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    border-radius: 0 !important;
+}
+/
+.nav-pills {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.nav-pills ul {
+    background: transparent !important;
+}
+
+.nav-link {
+    border-radius: 14px !important;
+    margin-bottom: 8px !important;
+
+    transition: all 0.18s ease !important;
+}
+
+.nav-link:hover {
+    background: rgba(255,255,255,0.05) !important;
+
+    transform: translateX(3px);
+}
+
+.nav-link.active {
+    background: rgba(166,28,46,0.22) !important;
+    border-left: 4px solid #FF3B53 !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 st.sidebar.divider()
 
@@ -473,8 +532,8 @@ if _n30 is not None:
 # =============================================================================
 # PAGE 1 — OVERVIEW / KPI DASHBOARD
 # =============================================================================
-if page.startswith("■"):
-    st.title("■ Overview Dashboard")
+if page == "Overview / KPI Dashboard":
+    st.title("Overview Dashboard")
     st.caption("National blood supply at a glance, based on the latest 30-day forecast.")
 
     n30     = data["next30"]
@@ -575,8 +634,8 @@ if page.startswith("■"):
 # =============================================================================
 # PAGE 2 — HISTORICAL TREND EXPLORER
 # =============================================================================
-elif page.startswith("▲"):
-    st.title("▲ Historical Trend Explorer")
+elif page == "Historical Trend Explorer":
+    st.title("Historical Trend Explorer")
     st.caption("Daily national donations, 2006 onward, with optional rolling average and MCO annotation.")
 
     cleaned = data["cleaned"]
@@ -666,8 +725,8 @@ elif page.startswith("▲"):
 # =============================================================================
 # PAGE 3 — 30-DAY FORECAST & RISK CALENDAR
 # =============================================================================
-elif page.startswith("◆"):
-    st.title("◆ 30-Day Forecast & Risk Calendar")
+elif page == "30-Day Forecast & Risk Calendar":
+    st.title("30-Day Forecast & Risk Calendar")
     st.caption("Day-by-day predicted donations with supply-risk flags for PDN planning.")
 
     n30 = data["next30"]
@@ -768,8 +827,8 @@ elif page.startswith("◆"):
 # =============================================================================
 # PAGE 4 — HOLIDAY IMPACT MATRIX
 # =============================================================================
-elif page.startswith("✦"):
-    st.title("✦ Holiday Impact Matrix")
+elif page == "Holiday Impact Matrix":
+    st.title("Holiday Impact Matrix")
     st.caption("How major Malaysian festivals affect daily donations (Objective 1 result).")
 
     h = data["holiday"]
@@ -857,8 +916,8 @@ elif page.startswith("✦"):
 # =============================================================================
 # PAGE 5 — MODEL PERFORMANCE
 # =============================================================================
-elif page.startswith("●"):
-    st.title("● Model Performance")
+elif page == "Model Performance":
+    st.title("Model Performance")
     st.caption("Out-of-sample accuracy of the Prophet model on the 2025 holdout.")
 
     m = data["metrics"]
