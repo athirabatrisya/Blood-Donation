@@ -20,6 +20,7 @@ import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
 from streamlit_option_menu import option_menu
+#from streamlit_option_menu import option_menu
 
 # ─────────────────────────────────────────────────────────────────────────────
 # CONFIGURATION
@@ -87,17 +88,17 @@ section[data-testid="stSidebar"] {
     background: __SIDEBAR_BG__ !important;
     color: __SIDEBAR_TEXT__ !important;
 }
-
 section[data-testid="stSidebar"] > div:first-child {
-    padding: 0.28rem 0.38rem 0.28rem;
+    padding: 0.65rem 0.7rem 0.55rem;
     height: 100vh;
     overflow: hidden !important;
 }
 
+
 /* Dividers in sidebar */
 section[data-testid="stSidebar"] hr {
     border-color: __SIDEBAR_LINE__ !important;
-    margin: 0.18rem 0 !important;
+    margin: 0.38rem 0 !important;
 }
 
 section[data-testid="stSidebar"] .stSlider {
@@ -117,58 +118,55 @@ div[data-testid="stMetricDelta"] { font-size: 0.75rem; }
 
 /* ═══════════════════ SIDEBAR MICRO-COMPONENTS ═══════════════════ */
 
+/* Supply status pill */
 .sb-pill {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    padding: 3px 8px;
+    gap: 5px;
+    padding: 4px 9px;
     border-radius: 20px;
-    font-size: 0.58rem;
+    font-size: 0.64rem;
     font-weight: 700;
     letter-spacing: 0.03em;
-    white-space: nowrap;
 }
 .sb-pill-safe { background: rgba(34,197,94,.16); color: __PILL_SAFE_TEXT__; border: 1px solid rgba(34,197,94,.36); }
 .sb-pill-warn { background: rgba(245,158,11,.18); color: __PILL_WARN_TEXT__; border: 1px solid rgba(245,158,11,.38); }
 .sb-pill-crit { background: rgba(239,68,68,.16); color: __PILL_CRIT_TEXT__; border: 1px solid rgba(239,68,68,.38); }
 
+/* Mini stat cards */
 .sb-stat {
     background: __SIDEBAR_CARD__;
     border: 1px solid __SIDEBAR_LINE__;
     border-radius: 7px;
-    padding: 5px 7px;
+    padding: 6px 8px;
     flex: 1;
-    min-width: 0;
 }
 .sb-stat-lbl {
-    font-size: 0.47rem;
+    font-size: 0.5rem;
     color: __SIDEBAR_MUTED__;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    line-height: 1.1;
+    letter-spacing: 0.09em;
 }
 .sb-stat-val {
-    font-size: 0.84rem;
+    font-size: 0.9rem;
     font-weight: 700;
     color: __SIDEBAR_TEXT__;
     margin-top: 1px;
-    line-height: 1.15;
+    line-height: 1.2;
 }
-.sb-stat-unit {
-    font-size: 0.46rem;
-    color: __SIDEBAR_SUBTLE__;
-    margin-top: 1px;
-    line-height: 1.1;
-}
+.sb-stat-unit { font-size: 0.5rem; color: __SIDEBAR_SUBTLE__; margin-top: 1px; }
 
+/* Footer info card */
 .sb-info {
     background: __SIDEBAR_INFO__;
     border-radius: 8px;
-    padding: 8px 10px;
+    padding: 10px 12px;
     border: 1px solid __SIDEBAR_LINE__;
     border-left: 3px solid #A61C2E;
 }
+            
+
 </style>
 """.replace("__SIDEBAR_BG__", SIDEBAR_BG)
     .replace("__SIDEBAR_CARD__", SIDEBAR_CARD)
@@ -185,6 +183,7 @@ div[data-testid="stMetricDelta"] { font-size: 0.75rem; }
     .replace("__PILL_CRIT_TEXT__", PILL_CRIT_TEXT),
     unsafe_allow_html=True,
 )
+
 
 def style_chart(fig, height, **layout_kwargs):
     """Keep Plotly chart text readable in Streamlit light and dark themes."""
@@ -288,8 +287,8 @@ if all(v is None for v in data.values()):
 
 # ── 1. Logo & Branding ──────────────────────────────────────────────────────
 st.sidebar.markdown(f"""
-<div style="display:flex;align-items:center;gap:7px;padding:0;">
-  <svg width="26" height="32" viewBox="0 0 28 34" fill="none"
+<div style="display:flex;align-items:center;gap:9px;padding:0.05rem 0.25rem 0.25rem;">
+  <svg width="28" height="34" viewBox="0 0 28 34" fill="none"
        xmlns="http://www.w3.org/2000/svg">
     <path d="M14 1C14 1 1.5 13.5 1.5 21C1.5 27.9 7.1 33.5 14 33.5
              C20.9 33.5 26.5 27.9 26.5 21C26.5 13.5 14 1 14 1Z"
@@ -301,18 +300,18 @@ st.sidebar.markdown(f"""
           stroke="white" stroke-width="1.3" stroke-linecap="round" opacity="0.35"/>
   </svg>
   <div>
-    <div style="font-size:0.98rem;font-weight:800;color:#E81A2C;
-                letter-spacing:-0.01em;line-height:1.05;">BloodFlow</div>
-    <div style="font-size:0.5rem;color:{SIDEBAR_MUTED};font-weight:800;
-                letter-spacing:0.12em;text-transform:uppercase;line-height:1.05;">Malaysia</div>
+    <div style="font-size:1.12rem;font-weight:800;color:#E81A2C;
+                letter-spacing:-0.01em;line-height:1.1;">BloodFlow</div>
+    <div style="font-size:0.57rem;color:{SIDEBAR_MUTED};font-weight:800;
+                letter-spacing:0.14em;text-transform:uppercase;">Malaysia</div>
   </div>
 </div>
-<div style="padding:0.05rem 0.3rem 0.1rem;"> 
-  <div style="font-size:0.61rem;color:{SIDEBAR_MUTED};line-height:1.25;font-weight:500;">
+<div style="padding:0.1rem 0.3rem 0.2rem;">
+  <div style="font-size:0.66rem;color:{SIDEBAR_MUTED};line-height:1.3;font-weight:500;">
     National Blood Supply Forecasting
   </div>
-  <div style="margin-top:0.22rem;font-size:0.5rem;color:{SIDEBAR_SUBTLE};
-              line-height:1.2;font-weight:700;letter-spacing:0.03em;">
+  <div style="margin-top:0.34rem;font-size:0.53rem;color:{SIDEBAR_SUBTLE};
+              line-height:1.35;font-weight:700;letter-spacing:0.03em;">
     WQD7001 GA2 · Group 12 · Universiti Malaya
   </div>
 </div>
@@ -331,27 +330,27 @@ with st.sidebar:
             "Holiday Impact Matrix",
             "Model Performance",
         ],
-        icons=["speedometer2", "graph-up-arrow", "calendar-week", "brightness-high", "activity"],
+        icons=["speedometer2", "graph-up-arrow", "calendar-week", "brightness-high","activity",],
         menu_icon=None,
         default_index=0,
         styles={
             "container": {
-                "padding": "0",
-                "margin": "0",
+                "padding": "none",
+                "margin": "none",
+                
                 "border": "none",
-                "background-color": "transparent",
             },
             "menu-title": {
-                "font-size": "0.5rem",
+                "font-size": "0.54rem",
                 "font-weight": "800",
                 "letter-spacing": "0.14em",
                 "text-transform": "uppercase",
                 "color": SIDEBAR_MUTED,
-                "padding": "0.18rem 0.25rem 0.12rem",
+                "padding": "0.35rem 0.35rem 0.2rem",
                 "display": "block",
             },
             "nav": {
-                "gap": "4px",
+                "gap": "6px",
                 "display": "flex",
                 "flex-direction": "column",
                 "width": "100%",
@@ -360,15 +359,15 @@ with st.sidebar:
                 "display": "flex",
                 "align-items": "center",
                 "width": "100%",
-                "padding": "0.65rem 0.85rem", 
-                "border-radius": "10px",
-                "margin": "0",
-                "font-size": "1rem",
+                "padding": "0.38rem 0.62rem",
+                "border-radius": "5px",
+                "margin": "1px 0",
+                "font-size": "0.9rem",
                 "font-weight": "500",
-                "line-height": "1.2",
+                "line-height": "1.15",
                 "color": SIDEBAR_TEXT,
                 "background-color": "transparent",
-                "border-left": "none",
+                "border-left": "3px solid transparent",
                 "transition": "background 0.15s, color 0.15s",
                 "gap": "8px",
             },
@@ -379,32 +378,78 @@ with st.sidebar:
             "nav-link-selected": {
                 "background-color": SIDEBAR_ACTIVE,
                 "color": SIDEBAR_ACCENT_TEXT,
-               "border-radius": "10px",
+                "border-left": "3px solid #A61C2E",
                 "font-weight": "600",
             },
             "icon": {
-                "font-size": "0.9rem",
+                "font-size": "0.95rem",
                 "margin-right": "2px",
-                "color": "inherit",
+                "color": "inherit",  
             },
         }
     )
+    
+st.markdown("""
+<style>
+
+section[data-testid="stSidebar"] div[data-testid="stVerticalBlock"] > div:has(.nav-pills) {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    border-radius: 0 !important;
+}
+.nav-pills {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.nav-pills ul {
+    background: transparent !important;
+}
+
+.nav-link {
+    border-radius: 14px !important;
+    margin-bottom: 8px !important;
+
+    transition: all 0.18s ease !important;
+}
+
+.nav-link:hover {
+    background: rgba(255,255,255,0.05) !important;
+
+    transform: translateX(3px);
+}
+
+.nav-link.active {
+    background: rgba(166,28,46,0.22) !important;
+    border-left: 4px solid #FF3B53 !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 st.sidebar.divider()
 
 # ── 3. Critical Threshold Control ─────────────────────────────────────────────
 st.sidebar.markdown(
     f"""
-<div style="padding:0;">
-  <div style="font-size:0.58rem;font-weight:800;color:{SIDEBAR_MUTED};
-              text-transform:uppercase;letter-spacing:0.12em;margin-bottom:1px;">
+<div style="padding:0 0.15rem;">
+  <div style="font-size:0.62rem;font-weight:800;color:{SIDEBAR_MUTED};
+              text-transform:uppercase;letter-spacing:0.13em;margin-bottom:2px;">
     Critical Threshold
   </div>
 </div>
 """,
     unsafe_allow_html=True,
 )
-
 CRITICAL_THRESHOLD = st.sidebar.slider(
     "bags/day",
     min_value=1500,
@@ -413,17 +458,16 @@ CRITICAL_THRESHOLD = st.sidebar.slider(
     step=50,
     label_visibility="collapsed",
 )
-
 st.sidebar.markdown(
     f"""
-<div style="padding:0;margin-top:-0.2rem;font-size:0.57rem;color:{SIDEBAR_MUTED};line-height:1.25;">
+<div style="padding:0 0.15rem;margin-top:-0.3rem;font-size:0.61rem;color:{SIDEBAR_MUTED};line-height:1.35;">
   MOH benchmark: <b style="color:{SIDEBAR_TEXT};">{CRITICAL_THRESHOLD:,}</b> bags/day
 </div>
 """,
     unsafe_allow_html=True,
 )
 
-# No extra divider here. Keep the sidebar compact.
+st.sidebar.divider()
 
 # ── 4. Supply Status Widget ──────────────────────────────────────────────────
 _n30 = data["next30"]
@@ -434,34 +478,34 @@ if _n30 is not None:
     if _risk_count >= 10:
         _pill_cls = "sb-pill-crit"
         _pill_txt = "HIGH RISK"
-        _bar_clr = "#EF4444"
+        _bar_clr  = "#EF4444"
     elif _risk_count > 0:
         _pill_cls = "sb-pill-warn"
         _pill_txt = "MODERATE"
-        _bar_clr = "#F59E0B"
+        _bar_clr  = "#F59E0B"
     else:
         _pill_cls = "sb-pill-safe"
         _pill_txt = "HEALTHY"
-        _bar_clr = "#22C55E"
+        _bar_clr  = "#22C55E"
 
-    _risk_pct = max(2, min(100, int(_risk_count / 30 * 100)))
+    _risk_pct   = max(2, min(100, int(_risk_count / 30 * 100)))
     _risk_val_c = PILL_CRIT_TEXT if _risk_count > 0 else PILL_SAFE_TEXT
 
     st.sidebar.markdown(f"""
-<div style="padding:0;">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
-    <div style="font-size:0.52rem;font-weight:800;color:{SIDEBAR_MUTED};
-                text-transform:uppercase;letter-spacing:0.11em;">
+<div style="padding:0 0.15rem;">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+    <div style="font-size:0.55rem;font-weight:800;color:{SIDEBAR_MUTED};
+                text-transform:uppercase;letter-spacing:0.12em;">
       Supply Status
     </div>
     <span class="sb-pill {_pill_cls}">{_pill_txt}</span>
   </div>
 
-  <div style="display:flex;gap:4px;">
+  <div style="display:flex;gap:5px;">
     <div class="sb-stat">
-      <div class="sb-stat-lbl">30d avg</div>
+      <div class="sb-stat-lbl">30-day avg</div>
       <div class="sb-stat-val">{_avg_pred:,.0f}</div>
-      <div class="sb-stat-unit">bags/day</div>
+      <div class="sb-stat-unit">bags / day</div>
     </div>
     <div class="sb-stat">
       <div class="sb-stat-lbl">Risk days</div>
@@ -470,20 +514,19 @@ if _n30 is not None:
     </div>
   </div>
 
-  <div style="margin-top:4px;">
+  <div style="margin-top:7px;">
     <div style="display:flex;justify-content:space-between;
-                font-size:0.5rem;color:{SIDEBAR_MUTED};margin-bottom:2px;">
+                font-size:0.52rem;color:{SIDEBAR_MUTED};margin-bottom:3px;">
       <span>Risk exposure</span>
       <span>{_risk_pct}%</span>
     </div>
     <div style="background:{SIDEBAR_CARD};border-radius:3px;height:4px;overflow:hidden;border:1px solid {SIDEBAR_LINE};">
-      <div style="height:100%;border-radius:3px;width:{_risk_pct}%;background:{_bar_clr};"></div>
+      <div style="height:100%;border-radius:3px;width:{_risk_pct}%;
+                  background:{_bar_clr};"></div>
     </div>
   </div>
 </div>
 """, unsafe_allow_html=True)
-
-st.sidebar.divider()
 
 
 # =============================================================================
@@ -1003,3 +1046,10 @@ elif page == "Model Performance":
 
         metrics_display["Value"] = metrics_display.apply(format_metric_value, axis=1)
         st.dataframe(metrics_display, use_container_width=True, hide_index=True)
+
+
+
+
+
+
+
