@@ -90,7 +90,7 @@ section[data-testid="stSidebar"] {
 }
 section[data-testid="stSidebar"] > div:first-child {
     padding: 0.65rem 0.7rem 0.55rem;
-    height: 80vh;
+    height: 100vh;
     overflow: hidden !important;
 }
 
@@ -113,7 +113,7 @@ section[data-testid="stSidebar"] .stSlider [data-baseweb="slider"] {
 div[data-testid="stMetricValue"] { font-size: 1.6rem; font-weight: 700; }
 div[data-testid="stMetricLabel"] { font-size: 0.82rem; font-weight: 600; color: #5A6A80; }
 div[data-testid="stMetricDelta"] { font-size: 0.75rem; }
-.block-container { padding-top: 1.75rem; }
+.block-container { padding-top: 1rem; }
 
 /* ═══════════════════ SIDEBAR MICRO-COMPONENTS ═══════════════════ */
 
