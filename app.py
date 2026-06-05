@@ -97,6 +97,9 @@ section[data-testid="stSidebar"] > div:first-child {
 section[data-testid="stSidebar"] > div:first-child::-webkit-scrollbar {
     width: 3px !important;          
 }
+section[data-testid="stSidebar"] > div:first-child::-webkit-scrollbar-track {
+    background: transparent !important;
+}
 
 /* Dividers in sidebar */
 section[data-testid="stSidebar"] hr {
