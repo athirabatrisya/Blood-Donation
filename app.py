@@ -86,37 +86,30 @@ st.markdown("""
 section[data-testid="stSidebar"] {
     background: __SIDEBAR_BG__ !important;
     color: __SIDEBAR_TEXT__ !important;
-
-    /* KEY FIXES */
     height: 100vh !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
 }
 
-/* Remove forced clipping */
 section[data-testid="stSidebar"] > div:first-child {
     padding: 0.65rem 0.7rem 1.2rem;
     height: auto !important;
     overflow: visible !important;
 }
 
-/* Improve spacing so content doesn't feel cramped */
 section[data-testid="stSidebar"] .block-container {
     padding-bottom: 2rem !important;
 }
 
-/* Divider spacing */
 section[data-testid="stSidebar"] hr {
     border-color: __SIDEBAR_LINE__ !important;
     margin: 0.6rem 0 !important;
 }
 
-/* Ensure option menu doesn't overflow awkwardly */
 section[data-testid="stSidebar"] .st-emotion-cache-1d391kg {
     max-height: none !important;
 }
 
-/* Optional: smoother scrolling */
 section[data-testid="stSidebar"] {
     scrollbar-width: thin;
 }max-height: none !important;
@@ -126,6 +119,11 @@ section[data-testid="stSidebar"] {
 section[data-testid="stSidebar"] hr {
     border-color: __SIDEBAR_LINE__ !important;
     margin: 0.38rem 0 !important;
+}
+
+section[data-testid="stSidebar"] hr {
+    border-color: __SIDEBAR_LINE__ !important;
+    margin: 0.6rem 0 !important;
 }
 
 section[data-testid="stSidebar"] .stSlider {
