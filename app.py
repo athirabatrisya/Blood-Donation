@@ -89,9 +89,14 @@ section[data-testid="stSidebar"] {
     color: __SIDEBAR_TEXT__ !important;
 }
 section[data-testid="stSidebar"] > div:first-child {
-    padding: 0.65rem 0.7rem 0.55rem;
-    height: 100vh;
+    padding: 0.5rem 0.7rem 0.55rem !important; 
+    height: 150vh;
     overflow: hidden !important;
+        
+}
+section[data-testid="stSidebar"] > div:first-child > div:first-child {
+    margin-top: 0 !important;         
+    padding-top: 0 !important;       
 }
 
 /* Dividers in sidebar */
