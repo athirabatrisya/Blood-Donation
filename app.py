@@ -88,16 +88,36 @@ section[data-testid="stSidebar"] {
     background: __SIDEBAR_BG__ !important;
     color: __SIDEBAR_TEXT__ !important;
 }
+[data-testid="stSidebarHeader"] {
+    display: none !important;
+}
+
+/* 2. Remove padding from the content container */
+[data-testid="stSidebarUserContent"] {
+    padding-top: 0rem !important;
+    margin-top: -2rem !important; /* Forces content into the deleted header space */
+}
+
+/* 3. Ensure the vertical block doesn't add its own padding */
+div[data-testid="stVerticalBlock"] {
+    gap: 0rem !important;
+}
+
+/* 4. Target the specific block containing your logo */
+div[data-testid="stVerticalBlock"] > div:first-child {
+    margin-top: -1.5rem !important;
+}
+
+/* 5. Keep the sidebar overall background */
+section[data-testid="stSidebar"] {
+    background: __SIDEBAR_BG__ !important;
+}
 section[data-testid="stSidebar"] > div:first-child {
-    padding: 0.5rem 0.7rem 0.55rem !important; 
+    padding: 0.65rem 0.7rem 0.55rem;
     height: 150vh;
     overflow: hidden !important;
-        
 }
-section[data-testid="stSidebar"] > div:first-child > div:first-child {
-    margin-top: 0 !important;         
-    padding-top: 0 !important;       
-}
+
 
 /* Dividers in sidebar */
 section[data-testid="stSidebar"] hr {
