@@ -90,10 +90,9 @@ section[data-testid="stSidebar"] {
 }
 section[data-testid="stSidebar"] > div:first-child {
     padding: 0.65rem 0.7rem 0.55rem;
-    height: 100vh;
+    height: 150vh;
     overflow: hidden !important;
 }
-
 
 /* Dividers in sidebar */
 section[data-testid="stSidebar"] hr {
