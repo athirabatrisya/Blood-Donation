@@ -95,6 +95,29 @@ section[data-testid="stSidebar"] > div:first-child {
     overflow: hidden !important;
 }
 
+section[data-testid="stSidebar"] > div {
+    padding-top: 0.5rem !important;
+}
+
+
+section[data-testid="stSidebar"] .block-container {
+    padding-top: 0rem !important;
+    margin-top: 0rem !important;
+}
+
+
+.menu-title {
+    margin-top: -10px !important;
+    padding-top: 0px !important;
+}
+
+
+.nav-pills {
+    margin-top: -8px !important;
+    padding-top: 0px !important;
+}
+
+
 /* Dividers in sidebar */
 section[data-testid="stSidebar"] hr {
     border-color: __SIDEBAR_LINE__ !important;
@@ -389,53 +412,7 @@ with st.sidebar:
             },
         }
     )
-    
-st.markdown("""
-<style>
-
-section[data-testid="stSidebar"] div[data-testid="stVerticalBlock"] > div:has(.nav-pills) {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-
-    padding: 0 !important;
-    margin: 0 !important;
-
-    border-radius: 0 !important;
-}
-.nav-pills {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-
-    padding: 0 !important;
-    margin: 0 !important;
-}
-
-.nav-pills ul {
-    background: transparent !important;
-}
-
-.nav-link {
-    border-radius: 14px !important;
-    margin-bottom: 8px !important;
-
-    transition: all 0.18s ease !important;
-}
-
-.nav-link:hover {
-    background: rgba(255,255,255,0.05) !important;
-
-    transform: translateX(3px);
-}
-
-.nav-link.active {
-    background: rgba(166,28,46,0.22) !important;
-    border-left: 4px solid #FF3B53 !important;
-}
-
-</style>
-""", unsafe_allow_html=True)
+  
 
 st.sidebar.divider()
 
