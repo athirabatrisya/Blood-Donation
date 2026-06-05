@@ -20,7 +20,6 @@ import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
 from streamlit_option_menu import option_menu
-#from streamlit_option_menu import option_menu
 
 # ─────────────────────────────────────────────────────────────────────────────
 # CONFIGURATION
@@ -87,41 +86,46 @@ st.markdown("""
 section[data-testid="stSidebar"] {
     background: __SIDEBAR_BG__ !important;
     color: __SIDEBAR_TEXT__ !important;
+
+    /* KEY FIXES */
+    height: 100vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
 }
 
+/* Remove forced clipping */
 section[data-testid="stSidebar"] > div:first-child {
-    padding: 0.5rem 0.7rem 0.55rem;
+    padding: 0.65rem 0.7rem 1.2rem;
     height: auto !important;
-    overflow: hidden !important;
+    overflow: visible !important;
 }
 
-section[data-testid="stSidebar"] > div {
-    padding-top: 0.5rem !important;
-}
-
-
+/* Improve spacing so content doesn't feel cramped */
 section[data-testid="stSidebar"] .block-container {
-    padding-top: 0rem !important;
-    margin-top: 0rem !important;
+    padding-bottom: 2rem !important;
 }
 
-
-.menu-title {
-    margin-top: -10px !important;
-    padding-top: 0px !important;
+/* Divider spacing */
+section[data-testid="stSidebar"] hr {
+    border-color: __SIDEBAR_LINE__ !important;
+    margin: 0.6rem 0 !important;
 }
 
-
-.nav-pills {
-    margin-top: -8px !important;
-    padding-top: 0px !important;
+/* Ensure option menu doesn't overflow awkwardly */
+section[data-testid="stSidebar"] .st-emotion-cache-1d391kg {
+    max-height: none !important;
 }
 
+/* Optional: smoother scrolling */
+section[data-testid="stSidebar"] {
+    scrollbar-width: thin;
+}max-height: none !important;
+}            
 
 /* Dividers in sidebar */
 section[data-testid="stSidebar"] hr {
     border-color: __SIDEBAR_LINE__ !important;
-    margin: 0.28rem 0 !important;
+    margin: 0.38rem 0 !important;
 }
 
 section[data-testid="stSidebar"] .stSlider {
@@ -137,7 +141,7 @@ section[data-testid="stSidebar"] .stSlider [data-baseweb="slider"] {
 div[data-testid="stMetricValue"] { font-size: 1.6rem; font-weight: 700; }
 div[data-testid="stMetricLabel"] { font-size: 0.82rem; font-weight: 600; color: #5A6A80; }
 div[data-testid="stMetricDelta"] { font-size: 0.75rem; }
-.block-container { padding-top: 1rem; }
+.block-container { padding-top: 1.75rem; }
 
 /* ═══════════════════ SIDEBAR MICRO-COMPONENTS ═══════════════════ */
 
@@ -253,7 +257,6 @@ def style_chart(fig, height, **layout_kwargs):
     return fig
 
 
-
 # ─────────────────────────────────────────────────────────────────────────────
 # DATA LOADING  (moved before sidebar so status widget can read it)
 # ─────────────────────────────────────────────────────────────────────────────
@@ -340,7 +343,6 @@ st.sidebar.markdown(f"""
   </div>
 </div>
 """, unsafe_allow_html=True)
-
 st.sidebar.divider()
 
 # ── 2. Navigation ─────────────────────────────────────────────────────────────
@@ -412,9 +414,7 @@ with st.sidebar:
             },
         }
     )
-  
-
-st.sidebar.divider()
+    
 
 # ── 3. Critical Threshold Control ─────────────────────────────────────────────
 st.sidebar.markdown(
@@ -1024,10 +1024,3 @@ elif page == "Model Performance":
 
         metrics_display["Value"] = metrics_display.apply(format_metric_value, axis=1)
         st.dataframe(metrics_display, use_container_width=True, hide_index=True)
-
-
-
-
-
-
-
