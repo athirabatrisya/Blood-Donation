@@ -401,7 +401,6 @@ section[data-testid="stSidebar"] div[data-testid="stVerticalBlock"] > div:has(.n
 
     border-radius: 0 !important;
 }
-/
 .nav-pills {
     background: transparent !important;
     border: none !important;
