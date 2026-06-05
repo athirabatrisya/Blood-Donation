@@ -85,75 +85,150 @@ st.markdown("""
 /* ═══════════════════ SIDEBAR ═══════════════════ */
 
 section[data-testid="stSidebar"] {
-    background: #0D1422 !important;
+    background: __SIDEBAR_BG__ !important;
+    color: __SIDEBAR_TEXT__ !important;
 }
-
 section[data-testid="stSidebar"] > div:first-child {
-    padding: 0.4rem 0.6rem 0.4rem;
+    padding: 0.65rem 0.7rem 0.55rem;
     height: 100vh;
-    overflow-y: auto !important; /* Allow scroll if screen is very small */
-    overflow-x: hidden !important;
+    overflow: hidden !important;
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
-section[data-testid="stSidebar"] > div:first-child::-webkit-scrollbar {
-    display: none;
-}
 
 /* Dividers in sidebar */
 section[data-testid="stSidebar"] hr {
-    border-color: #1A2540 !important;
-    margin: 0.4rem 0 !important;
+    border-color: __SIDEBAR_LINE__ !important;
+    margin: 0.38rem 0 !important;
 }
 
-/* Slider Customization */
 section[data-testid="stSidebar"] .stSlider {
-    padding: 0 !important;
+    padding: 0 0.1rem !important;
 }
 section[data-testid="stSidebar"] .stSlider [data-baseweb="slider"] {
-    margin-top: -0.4rem !important;
+    margin-top: -0.2rem !important;
 }
+
+/* ═══════════════════ MAIN CONTENT ═══════════════════ */
+
+.main { background-color: #F5F7FB; }
+div[data-testid="stMetricValue"] { font-size: 1.6rem; font-weight: 700; }
+div[data-testid="stMetricLabel"] { font-size: 0.82rem; font-weight: 600; color: #5A6A80; }
+div[data-testid="stMetricDelta"] { font-size: 0.75rem; }
+.block-container { padding-top: 1.75rem; }
 
 /* ═══════════════════ SIDEBAR MICRO-COMPONENTS ═══════════════════ */
 
+/* Supply status pill */
 .sb-pill {
     display: inline-flex;
     align-items: center;
-    padding: 2px 10px;
+    gap: 5px;
+    padding: 4px 9px;
     border-radius: 20px;
-    font-size: 0.55rem;
-    font-weight: 800;
-    letter-spacing: 0.04em;
-    background: rgba(166, 28, 46, 0.2);
-    color: #FF4B60;
-    border: 1px solid rgba(166, 28, 46, 0.4);
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
 }
+.sb-pill-safe { background: rgba(34,197,94,.16); color: __PILL_SAFE_TEXT__; border: 1px solid rgba(34,197,94,.36); }
+.sb-pill-warn { background: rgba(245,158,11,.18); color: __PILL_WARN_TEXT__; border: 1px solid rgba(245,158,11,.38); }
+.sb-pill-crit { background: rgba(239,68,68,.16); color: __PILL_CRIT_TEXT__; border: 1px solid rgba(239,68,68,.38); }
 
+/* Mini stat cards */
 .sb-stat {
-    background: #111B2E;
-    border: 1px solid #1A2540;
-    border-radius: 8px;
-    padding: 6px 10px;
+    background: __SIDEBAR_CARD__;
+    border: 1px solid __SIDEBAR_LINE__;
+    border-radius: 7px;
+    padding: 6px 8px;
     flex: 1;
 }
 .sb-stat-lbl {
-    font-size: 0.48rem;
-    color: #94A3B8;
+    font-size: 0.5rem;
+    color: __SIDEBAR_MUTED__;
     font-weight: 800;
     text-transform: uppercase;
+    letter-spacing: 0.09em;
 }
 .sb-stat-val {
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 700;
-    color: #FFFFFF;
+    color: __SIDEBAR_TEXT__;
+    margin-top: 1px;
+    line-height: 1.2;
 }
-.sb-stat-unit {
-    font-size: 0.48rem;
-    color: #64748B;
+.sb-stat-unit { font-size: 0.5rem; color: __SIDEBAR_SUBTLE__; margin-top: 1px; }
+
+/* Footer info card */
+.sb-info {
+    background: __SIDEBAR_INFO__;
+    border-radius: 8px;
+    padding: 10px 12px;
+    border: 1px solid __SIDEBAR_LINE__;
+    border-left: 3px solid #A61C2E;
 }
+            
 
 </style>
-""", unsafe_allow_html=True)
+""".replace("__SIDEBAR_BG__", SIDEBAR_BG)
+    .replace("__SIDEBAR_CARD__", SIDEBAR_CARD)
+    .replace("__SIDEBAR_INFO__", SIDEBAR_INFO)
+    .replace("__SIDEBAR_TEXT__", SIDEBAR_TEXT)
+    .replace("__SIDEBAR_MUTED__", SIDEBAR_MUTED)
+    .replace("__SIDEBAR_SUBTLE__", SIDEBAR_SUBTLE)
+    .replace("__SIDEBAR_LINE__", SIDEBAR_LINE)
+    .replace("__SIDEBAR_HOVER__", SIDEBAR_HOVER)
+    .replace("__SIDEBAR_ACTIVE__", SIDEBAR_ACTIVE)
+    .replace("__SIDEBAR_ACCENT_TEXT__", SIDEBAR_ACCENT_TEXT)
+    .replace("__PILL_SAFE_TEXT__", PILL_SAFE_TEXT)
+    .replace("__PILL_WARN_TEXT__", PILL_WARN_TEXT)
+    .replace("__PILL_CRIT_TEXT__", PILL_CRIT_TEXT),
+    unsafe_allow_html=True,
+)
+
+
+def style_chart(fig, height, **layout_kwargs):
+    """Keep Plotly chart text readable in Streamlit light and dark themes."""
+    fig.update_layout(
+        height=height,
+        paper_bgcolor=CHART_BG,
+        plot_bgcolor=CHART_PLOT_BG,
+        font=dict(color=CHART_TEXT),
+        hoverlabel=dict(
+            bgcolor=CHART_HOVER_BG,
+            bordercolor=CHART_HOVER_BORDER,
+            font=dict(color=CHART_TEXT),
+        ),
+    )
+    fig.update_xaxes(
+        automargin=True,
+        title_standoff=14,
+        color=CHART_MUTED,
+        title_font=dict(color=CHART_TEXT),
+        tickfont=dict(color=CHART_MUTED),
+        gridcolor=CHART_GRID,
+        zerolinecolor=CHART_ZERO,
+        linecolor=CHART_ZERO,
+    )
+    fig.update_yaxes(
+        automargin=True,
+        title_standoff=12,
+        color=CHART_MUTED,
+        title_font=dict(color=CHART_TEXT),
+        tickfont=dict(color=CHART_MUTED),
+        gridcolor=CHART_GRID,
+        zerolinecolor=CHART_ZERO,
+        linecolor=CHART_ZERO,
+    )
+    if layout_kwargs:
+        fig.update_layout(**layout_kwargs)
+    fig.update_layout(
+        legend=dict(
+            bgcolor="rgba(0,0,0,0)",
+            font=dict(color=CHART_TEXT),
+        )
+    )
+    fig.update_annotations(font=dict(color=CHART_TEXT))
+    return fig
+
 
 
 # ─────────────────────────────────────────────────────────────────────────────
