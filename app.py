@@ -97,7 +97,7 @@ section[data-testid="stSidebar"] > div:first-child {
 /* Dividers in sidebar */
 section[data-testid="stSidebar"] hr {
     border-color: __SIDEBAR_LINE__ !important;
-    margin: 0.38rem 0 !important;
+    margin: 0.28rem 0 !important;
 }
 
 section[data-testid="stSidebar"] .stSlider {
