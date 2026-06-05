@@ -286,7 +286,7 @@ if all(v is None for v in data.values()):
 
 # ── 1. Logo & Branding ──────────────────────────────────────────────────────
 st.sidebar.markdown(f"""
-<div style="display:flex;align-items:center;gap:8px;padding:0;">
+<div style="display:flex;align-items:center;gap:9px;padding:0.05rem 0.25rem 0.25rem;">
   <svg width="28" height="34" viewBox="0 0 28 34" fill="none"
        xmlns="http://www.w3.org/2000/svg">
     <path d="M14 1C14 1 1.5 13.5 1.5 21C1.5 27.9 7.1 33.5 14 33.5
@@ -305,7 +305,7 @@ st.sidebar.markdown(f"""
                 letter-spacing:0.14em;text-transform:uppercase;">Malaysia</div>
   </div>
 </div>
-<div style="padding:0 0.25rem 0.05rem;">
+<div style="padding:0.1rem 0.3rem 0.2rem;">
   <div style="font-size:0.66rem;color:{SIDEBAR_MUTED};line-height:1.3;font-weight:500;">
     National Blood Supply Forecasting
   </div>
