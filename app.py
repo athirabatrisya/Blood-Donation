@@ -91,14 +91,8 @@ section[data-testid="stSidebar"] {
 
 section[data-testid="stSidebar"] > div:first-child {
     padding: 0.5rem 0.7rem 0.55rem;
-    height: 150vh;
-    overflow: auto !important;
-}
-section[data-testid="stSidebar"] > div:first-child::-webkit-scrollbar {
-    width: 3px !important;          
-}
-section[data-testid="stSidebar"] > div:first-child::-webkit-scrollbar-track {
-    background: transparent !important;
+    height: 100vh;
+    overflow: hidden !important;
 }
 
 /* Dividers in sidebar */
