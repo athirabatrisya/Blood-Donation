@@ -90,7 +90,7 @@ section[data-testid="stSidebar"] {
 }
 section[data-testid="stSidebar"] > div:first-child {
     padding: 0.65rem 0.7rem 0.55rem;
-    height: 150vh;
+    height: 80vh;
     overflow: hidden !important;
 }
 
