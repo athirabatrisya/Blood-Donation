@@ -307,7 +307,7 @@ st.sidebar.markdown(f"""
                 letter-spacing:0.12em;text-transform:uppercase;line-height:1.05;">Malaysia</div>
   </div>
 </div>
-<div style="padding:0.05rem 0 0;">
+<div style="padding:0.05rem 0.3rem 0.1rem;"> 
   <div style="font-size:0.61rem;color:{SIDEBAR_MUTED};line-height:1.25;font-weight:500;">
     National Blood Supply Forecasting
   </div>
@@ -351,7 +351,7 @@ with st.sidebar:
                 "display": "block",
             },
             "nav": {
-                "gap": "2px",
+                "gap": "4px",
                 "display": "flex",
                 "flex-direction": "column",
                 "width": "100%",
@@ -360,17 +360,17 @@ with st.sidebar:
                 "display": "flex",
                 "align-items": "center",
                 "width": "100%",
-                "padding": "0.26rem 0.5rem",
-                "border-radius": "5px",
+                "padding": "0.65rem 0.85rem", 
+                "border-radius": "10px",
                 "margin": "0",
-                "font-size": "0.76rem",
+                "font-size": "1rem",
                 "font-weight": "500",
-                "line-height": "1.05",
+                "line-height": "1.2",
                 "color": SIDEBAR_TEXT,
                 "background-color": "transparent",
-                "border-left": "3px solid transparent",
+                "border-left": "none",
                 "transition": "background 0.15s, color 0.15s",
-                "gap": "6px",
+                "gap": "8px",
             },
             "nav-link-hover": {
                 "background-color": SIDEBAR_HOVER,
@@ -379,7 +379,7 @@ with st.sidebar:
             "nav-link-selected": {
                 "background-color": SIDEBAR_ACTIVE,
                 "color": SIDEBAR_ACCENT_TEXT,
-                "border-left": "3px solid #A61C2E",
+               "border-radius": "10px",
                 "font-weight": "600",
             },
             "icon": {
@@ -485,21 +485,6 @@ if _n30 is not None:
 
 st.sidebar.divider()
 
-# ── 5. Footer ────────────────────────────────────────────────────────────────
-st.sidebar.markdown(f"""
-<div class="sb-info">
-  <div style="font-size:0.5rem;font-weight:800;color:{SIDEBAR_MUTED};
-              text-transform:uppercase;letter-spacing:0.12em;">
-    Data snapshot
-  </div>
-  <div style="margin-top:2px;font-size:0.63rem;color:{SIDEBAR_TEXT};line-height:1.25;font-weight:600;">
-    Daily donations · {len(data["cleaned"]):,} records
-  </div>
-  <div style="margin-top:2px;font-size:0.5rem;color:{SIDEBAR_SUBTLE};line-height:1.2;">
-    Updated from outputs folder
-  </div>
-</div>
-""", unsafe_allow_html=True)
 
 # =============================================================================
 # PAGE 1 — OVERVIEW / KPI DASHBOARD
